@@ -62,10 +62,14 @@ Next, install the required packages:
 
 .. code-block:: bash
 
-    # For the minimal requirements, use:
-    pip install -r requirements.txt
-    # For a full installation, use:
-    pip install -r requirements-dev.txt
+   make setup
+
+This creates a ``.venv`` virtual environment (if one doesn't exist), installs all dependencies (``requirements-dev.txt`` + editable package install), and configures pre-commit hooks.
+You can override defaults:
+
+.. code-block:: bash
+
+   make setup VENV=myenv PYTHON=python3.11
 
 Moreover, if you plan to utilize ONNX or TensorRT, please follow :ref:`ONNX`, :ref:`TensorRT` for more installation details.
 
