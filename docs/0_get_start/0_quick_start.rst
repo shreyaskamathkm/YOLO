@@ -16,8 +16,11 @@ Clone the repository and install the dependencies:
 
    git clone https://github.com/WongKinYiu/YOLO.git
    cd YOLO
-   pip install -r requirements-dev.txt
+   make setup
    # Make sure to work inside the cloned folder.
+
+This creates a ``.venv`` virtual environment (if one doesn't exist), installs all dependencies, and sets up pre-commit hooks.
+You can override defaults with ``make setup VENV=myenv PYTHON=python3.11``.
 
 Alternatively, If you are planning to make a simple change:
 
