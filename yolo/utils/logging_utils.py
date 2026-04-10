@@ -21,7 +21,12 @@ import numpy as np
 import torch
 import wandb
 from lightning import LightningModule, Trainer, seed_everything
-from lightning.pytorch.callbacks import Callback, LearningRateMonitor, RichModelSummary, RichProgressBar
+from lightning.pytorch.callbacks import (
+    Callback,
+    LearningRateMonitor,
+    RichModelSummary,
+    RichProgressBar,
+)
 from lightning.pytorch.callbacks.progress.rich_progress import CustomProgress
 from lightning.pytorch.loggers import TensorBoardLogger, WandbLogger
 from lightning.pytorch.utilities import rank_zero_only
