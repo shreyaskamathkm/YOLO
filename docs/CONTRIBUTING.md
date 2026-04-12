@@ -13,8 +13,37 @@ We strive to maintain a high standard of quality in our codebase:
 - **Testing:** We use `pytest` for testing. Please add tests for new code you create.
 - **Formatting:** Our code follows a consistent style enforced by `isort` for imports sorting and `black` for code formatting. Run these tools to format your code before submitting a pull request.
 
-## GitHub Actions
-We utilize GitHub Actions for continuous integration. When you submit a pull request, automated tests, formatting checks, and a version bump check will run. Ensure that all checks pass for your pull request to be accepted.
+## CI Workflows
+
+All workflows live in `.github/workflows/`. The build and test logic is defined once in `_build-test.yaml` and shared across workflows.
+
+| Workflow | Trigger | What it does |
+|---|---|---|
+| `pr-checks.yaml` | PR to `main` | Runs version check, then lint + test if it passes |
+| `develop.yaml` | Push to `main` | Lint + test after merge |
+| `release.yaml` | Push to `main` | Creates git tag and GitHub Release |
+| `docs.yaml` | Push to `main` (docs changed) | Deploys docs to GitHub Pages |
+
+### PR check order
+
+```
+PR opened
+├── version-check        (fast gate, ~5s)
+│     ✅ pass
+│     └── build_and_test (lint + test)
+│           ✅ pass → merge allowed
+│           ❌ fail → merge blocked
+```
+
+Tests are skipped entirely if the version wasn't bumped — no CI minutes are wasted.
+
+### After merge
+
+```
+PR merged to main
+├── CI (develop.yaml)   → lint + test
+└── release.yaml        → git tag + GitHub Release
+```
 
 ## How to Contribute
 
