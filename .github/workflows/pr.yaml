@@ -1,16 +1,14 @@
-name: Version Check
+name: PR Checks
 
 on:
   pull_request:
     branches: [main]
 
 jobs:
-  check-version-bump:
+  version-check:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -34,8 +32,15 @@ jobs:
           echo "main version : $MAIN_VER"
           echo "PR version   : $PR_VER"
           if [ "$PR_VER" = "$MAIN_VER" ]; then
-            echo ""
             echo "ERROR: Version not bumped. Update version in pyproject.toml before merging."
             exit 1
           fi
           echo "Version bumped: $MAIN_VER -> $PR_VER"
+
+  lint_and_test:
+    needs: version-check
+    uses: ./.github/workflows/_lint-test.yaml
+
+  validate_and_infer:
+    needs: version-check
+    uses: ./.github/workflows/_validate-inference.yaml

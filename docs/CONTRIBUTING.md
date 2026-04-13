@@ -5,16 +5,57 @@ Thank you for your interest in contributing to this project! We value your contr
 ## Quick Links
 - [Main README](../README.md)
 - [License](../LICENSE)
-- [Issue Tracker](https://github.com/WongKinYiu/yolov9mit/issues)
-- [Pull Requests](https://github.com/WongKinYiu/yolov9mit/pulls)
+- [Issue Tracker](https://github.com/shreyaskamathkm/yolo/issues)
+- [Pull Requests](https://github.com/shreyaskamathkm/yolo/pulls)
 
 ## Testing and Formatting
 We strive to maintain a high standard of quality in our codebase:
 - **Testing:** We use `pytest` for testing. Please add tests for new code you create.
 - **Formatting:** Our code follows a consistent style enforced by `isort` for imports sorting and `black` for code formatting. Run these tools to format your code before submitting a pull request.
 
-## GitHub Actions
-We utilize GitHub Actions for continuous integration. When you submit a pull request, automated tests, formatting checks, and a version bump check will run. Ensure that all checks pass for your pull request to be accepted.
+## CI Workflows
+
+All workflows live in `.github/workflows/`. Shared logic is defined once in reusable workflows (prefixed `_`) and called from the top-level workflows.
+
+| File | Trigger | What it does |
+|---|---|---|
+| `pr.yaml` | PR to `main` | Version check → lint/test + validation/inference |
+| `ci.yaml` | Push to `main` | Lint + test after merge |
+| `integration.yaml` | Push to `main` | Validation + inference after merge |
+| `release.yaml` | Push to `main` | Creates git tag and GitHub Release |
+| `docker.yaml` | GitHub Release published | Builds and pushes Docker image to Docker Hub |
+| `docs.yaml` | Push to `main` (docs changed) | Deploys docs to GitHub Pages |
+
+Reusable (internal, not triggered directly):
+
+| File | Used by |
+|---|---|
+| `_lint-test.yaml` | `pr.yaml`, `ci.yaml` |
+| `_validate-inference.yaml` | `pr.yaml`, `integration.yaml` |
+
+### PR check order
+
+```
+PR opened
+├── version-check              (fast gate, ~5s)
+│     ✅ pass
+│     ├── lint_and_test        (lint + test)
+│     └── validate_and_infer   (validation + inference, Python 3.8 + 3.10)
+│           all ✅ → merge allowed
+│           any ❌ → merge blocked
+```
+
+Tests are skipped entirely if the version wasn't bumped — no CI minutes are wasted.
+
+### After merge
+
+```
+PR merged to main
+├── ci.yaml          → lint + test
+├── integration.yaml → validation + inference
+├── release.yaml     → git tag + GitHub Release
+└── docker.yaml      → Docker Publish (triggered by the GitHub Release)
+```
 
 ## How to Contribute
 
@@ -56,4 +97,4 @@ Once you submit a PR, maintainers will review your work, suggest changes if nece
 
 Your contributions are greatly appreciated and vital to the project's success!
 
-Please feel free to contact [henrytsui000@gmail.com](mailto:henrytsui000@gmail.com)!
+Please feel free to open an [issue](https://github.com/shreyaskamathkm/yolo/issues) or start a [discussion](https://github.com/shreyaskamathkm/yolo/discussions)!
