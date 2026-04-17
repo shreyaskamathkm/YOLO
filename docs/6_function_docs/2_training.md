@@ -2,7 +2,7 @@
 
 ## Solver
 
-::: yolo.training.solver
+::: yolo.tasks.detection.solver
     options:
       members: true
       undoc-members: true
